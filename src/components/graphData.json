@@ -1,0 +1,119 @@
+
+{
+    "impactAnalyzer": [
+        {
+            "connectedVertices": [
+                {
+                    "level": 0,
+                    "levelConnectedVertices": [
+                        {
+                            "assetId": "connector_last_checked",
+                            "connections": [
+                                {
+                                    "assetId": "_fivetran_job_last_checked",
+                                    "edgeType": "ops",
+                                    "graphName": "phoenix",
+                                    "id": 12,
+                                    "impactColor": 0,
+                                    "level": 1,
+                                    "description": "Description for _fivetran_job_last_checked"
+                                },
+                                {
+                                    "assetId": "transaction_process_rank",
+                                    "edgeType": "ops",
+                                    "graphName": "phoenix",
+                                    "id": 37,
+                                    "impactColor": 0,
+                                    "level": 1,
+                                    "description": "Description for transaction_process_rank"
+                                },
+                                {
+                                    "assetId": "connector_step",
+                                    "edgeType": "ops",
+                                    "graphName": "phoenix",
+                                    "id": 15,
+                                    "impactColor": 0,
+                                    "level": 1,
+                                    "description": "Description for connector_step"
+                                },
+                                {
+                                    "assetId": "process_step",
+                                    "edgeType": "ops",
+                                    "graphName": "phoenix",
+                                    "id": 16,
+                                    "impactColor": 0,
+                                    "level": 1,
+                                    "description": "Description for process_step"
+                                },
+                                {
+                                    "assetId": "customer_name",
+                                    "edgeType": "ops",
+                                    "graphName": "phoenix",
+                                    "id": 17,
+                                    "impactColor": 0,
+                                    "level": 1,
+                                    "description": "Description for customer_name"
+                                },
+                                {
+                                    "assetId": "connectorcreated",
+                                    "edgeType": "ops",
+                                    "graphName": "phoenix",
+                                    "id": 71,
+                                    "impactColor": 1,
+                                    "level": 1,
+                                    "description": "Description for connectorcreated"
+                                }
+                            ],
+                            "edgeType": "",
+                            "graphName": "phoenix",
+                            "id": 1,
+                            "impactColor": 0,
+                            "level": 0,
+                            "description": "Description for connector_last_checked"
+                        }
+                    ]
+                }
+            ],
+            "name": "levelTraverser"
+        },
+        {
+            "connectedVertices": [
+                {
+                    "level": 0,
+                    "levelConnectedVertices": [
+                        {
+                            "assetId": "urn_common_last_modified",
+                            "connections": [
+                                {
+                                    "assetId": "mds_subtotal",
+                                    "edgeType": "ops",
+                                    "graphName": "phoenix",
+                                    "id": 25,
+                                    "impactColor": 0,
+                                    "level": 1,
+                                    "description": "Description for mds_subtotal"
+                                },
+                                {
+                                    "assetId": "event_deleted",
+                                    "edgeType": "ops",
+                                    "graphName": "phoenix",
+                                    "id": 23,
+                                    "impactColor": 0,
+                                    "level": 1,
+                                    "description": "Description for event_deleted"
+                                }
+                            ],
+                            "edgeType": "",
+                            "graphName": "phoenix",
+                            "id": 2,
+                            "impactColor": 0,
+                            "level": 0,
+                            "description": "Description for urn_common_last_modified"
+                        }
+                    ]
+                }
+            ],
+            "name": "levelTraverser"
+        }
+    ]
+}
