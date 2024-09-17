@@ -1,12 +1,14 @@
 <template>
     <div class="vue-flow-wrapper">
-        <div class="mb-4 text-4xl font-medium">Impact Analysis</div>
-        <div class="flex flex-row w-full">
-            <input type="text" v-model="searchTerm" placeholder="Enter node number..."
-                @change="e => searchTerm = e.target.value"
-                class="px-2 py-1 mr-2 bg-white border border-blue-400 border-solid rounded outline-none basis-11/12" />
-            <button @click="searchNode"
-                class="text-white bg-blue-500 border border-blue-500 border-solid rounded basis-1/12">Search</button>
+        <div class="flex justify-between">
+            <div class="text-4xl font-medium">Impact Analysis</div>
+            <div class="flex flex-row">
+                <input type="number" v-model="searchTerm" placeholder="Enter node number..."
+                    @change="e => searchTerm = e.target.value" @keyup.enter="searchNode"
+                    class="px-2 py-1 mr-2 bg-white border border-blue-400 border-solid rounded outline-none basis-11/12" />
+                <!-- <button @click="searchNode"
+                    class="w-full text-white bg-blue-500 border border-blue-500 border-solid rounded basis-1/12">Search</button> -->
+            </div>
         </div>
 
         <VueFlow v-model="elements" :default-viewport="{ zoom: 0.5 }" :fit-view-on-init="true">
@@ -27,6 +29,11 @@
                 </div>
             </template>
         </VueFlow>
+
+        <!-- Loader overlay -->
+        <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
+            <div class="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
+        </div>
     </div>
     <!-- <div v-show="tooltipVisible" class="custom-tooltip" :style="tooltipStyle">
         {{ tooltipContent }}
@@ -60,20 +67,29 @@ const tooltipStyle = ref({
     left: '0px'
 });
 
+const isLoading = ref(false);
+
 const searchNode = async () => {
-    const response = await fetch(`https://fea5-3-110-12-203.ngrok-free.app/api/v1/report/atlan/Table/impact_analysis_report?internalID=${searchTerm.value || 1}`, {
-        method: 'POST', // Specify POST method
-        headers: {
-            'Content-Type': 'application/json', // Set the content type
-            // Include other headers if needed
-        },
-        body: JSON.stringify({
-            "change_type": "ADD_NEW_FIELD",
-            "version": "1.0.1",
+    isLoading.value = true;
+    try {
+        const response = await fetch(`https://fea5-3-110-12-203.ngrok-free.app/api/v1/report/atlan/Table/impact_analysis_report?internalID=${searchTerm.value || 1}`, {
+            method: 'POST', // Specify POST method
+            headers: {
+                'Content-Type': 'application/json', // Set the content type
+                // Include other headers if needed
+            },
+            body: JSON.stringify({
+                "change_type": "ADD_NEW_FIELD",
+                "version": "1.0.1",
+            })
         })
-    })
-    const data = await response.json();
-    elements.value = processData(data)
+        const data = await response.json();
+        elements.value = processData(data);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    } finally {
+        isLoading.value = false;
+    }
 };
 
 const showTooltip = (event, description) => {
@@ -169,72 +185,7 @@ const onFitView = () => {
 };
 
 onMounted(async () => {
-    // Your existing data loading code here
-    // Make sure to include a 'description' field in your connection objects
-    // const rawData = {
-    //     "impactAnalyzer": [
-    //         {
-    //             "connectedVertices": [
-    //                 {
-    //                     "level": 0,
-    //                     "levelConnectedVertices": [
-    //                         {
-    //                             "assetId": "connector_last_checked",
-    //                             "connections": [
-    //                                 {
-    //                                     "assetId": "_fivetran_job_last_checked",
-    //                                     "edgeType": "ops",
-    //                                     "graphName": "phoenix",
-    //                                     "id": 12,
-    //                                     "impactColor": 0,
-    //                                     "level": 1,
-    //                                     "description": "Description for _fivetran_job_last_checked"
-    //                                 },
-    //                                 {
-    //                                     "assetId": "transaction_process_rank",
-    //                                     "edgeType": "ops",
-    //                                     "graphName": "phoenix",
-    //                                     "id": 37,
-    //                                     "impactColor": 0,
-    //                                     "level": 1,
-    //                                     "description": "Description for transaction_process_rank"
-    //                                 },
-    //                                 {
-    //                                     "assetId": "connectorcreated",
-    //                                     "edgeType": "ops",
-    //                                     "graphName": "phoenix",
-    //                                     "id": 71,
-    //                                     "impactColor": 1,
-    //                                     "level": 1,
-    //                                     "description": "Description for connectorcreated"
-    //                                 },
-    //                                 {
-    //                                     "assetId": "mds_level",
-    //                                     "edgeType": "ops",
-    //                                     "graphName": "phoenix",
-    //                                     "id": 26,
-    //                                     "impactColor": 2,
-    //                                     "level": 1,
-    //                                     "description": "Description for mds_level"
-    //                                 }
-    //                             ],
-    //                             "edgeType": "",
-    //                             "graphName": "phoenix",
-    //                             "id": 1,
-    //                             "impactColor": 0,
-    //                             "level": 0,
-    //                             "description": "Description for connector_last_checked"
-    //                         }
-    //                     ]
-    //                 }
-    //             ],
-    //             "name": "levelTraverser"
-    //         }
-    //         // ... (other impactAnalyzer items)
-    //     ]
-    // };
-    // elements.value = processData(rawData);
-    searchNode();
+    await searchNode();
 });
 
 onPaneReady(({ fitView }) => {
@@ -247,6 +198,8 @@ onPaneReady(({ fitView }) => {
     width: 100%;
     height: 600px;
     background-color: #fff;
+    position: relative;
+    /* Add this to allow absolute positioning of the loader */
 }
 
 .custom-tooltip {
