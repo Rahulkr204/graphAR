@@ -32,7 +32,43 @@
 
         <!-- Loader overlay -->
         <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
-            <div class="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
+            <!-- <div class="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div> -->
+            <!-- <div class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full"
+                role="status" aria-label="loading">
+                <span class="sr-only">Loading...</span>
+            </div> -->
+            <div class="relative">
+                <div class="p-4 border border-blue-200 rounded-lg bg-blue-50">
+                    <div class="flex">
+                        <div class="shrink-0">
+                            <svg class="shrink-0 size-4 text-blue-600 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="24"
+                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                                <path d="M12 9v4"></path>
+                                <path d="M12 17h.01"></path>
+                            </svg>
+                        </div>
+                        <div class="ms-3">
+                            <div class="mt-2 text-sm text-blue-700">
+                                <p v-if="loadingStep >= 1" class="font-semibold">Loading assets...</p>
+                                <p v-if="loadingStep >= 2">Please wait while we jazz things up!</p>
+                                <p v-if="loadingStep >= 3">Fetching the coolest nodes and edges for you...</p>
+                                <p v-if="loadingStep >= 4">Almost there! Preparing the graph magic...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="absolute top-0 rounded-lg start-0 size-full bg-white/50"></div>
+
+                <div class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 start-1/2">
+                    <div class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full"
+                        role="status" aria-label="loading">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- <div v-show="tooltipVisible" class="custom-tooltip" :style="tooltipStyle">
@@ -68,27 +104,42 @@ const tooltipStyle = ref({
 });
 
 const isLoading = ref(false);
+const loadingStep = ref(0);
 
 const searchNode = async () => {
     isLoading.value = true;
+    loadingStep.value = 0;
+
     try {
-        const response = await fetch(`https://fea5-3-110-12-203.ngrok-free.app/api/v1/report/atlan/Table/impact_analysis_report?internalID=${searchTerm.value || 1}`, {
-            method: 'POST', // Specify POST method
+        loadingStep.value = 1;
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
+
+        loadingStep.value = 2;
+        const response = await fetch(`https://c10d-52-66-4-2.ngrok-free.app/api/v1/report/atlan/Table/impact_analysis_report?internalID=${searchTerm.value || 1}`, {
+            method: 'POST',
             headers: {
-                'Content-Type': 'application/json', // Set the content type
-                // Include other headers if needed
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 "change_type": "ADD_NEW_FIELD",
                 "version": "1.0.1",
             })
-        })
+        });
+
+        loadingStep.value = 3;
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
+
         const data = await response.json();
+
+        loadingStep.value = 4;
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
+
         elements.value = processData(data);
     } catch (error) {
         console.error('Error fetching data:', error);
     } finally {
         isLoading.value = false;
+        loadingStep.value = 0;
     }
 };
 
@@ -167,6 +218,7 @@ const processData = (data) => {
                         id: `e${nodeId}-${targetId}`,
                         source: nodeId,
                         target: targetId,
+                        title: connection.description || 'Description not available',
                         style: { stroke: impactColorMap[connection.impactColor] },
                         animated: connection.impactColor !== 0,
                         label: connection.description
