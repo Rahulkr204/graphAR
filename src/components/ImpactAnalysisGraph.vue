@@ -61,7 +61,7 @@ const tooltipStyle = ref({
 });
 
 const searchNode = async () => {
-    const response = await fetch("https://fea5-3-110-12-203.ngrok-free.app/api/v1/report/atlan/Table/impact_analysis_report?internalID=31", {
+    const response = await fetch(`https://fea5-3-110-12-203.ngrok-free.app/api/v1/report/atlan/Table/impact_analysis_report?internalID=${searchTerm.value || 1}`, {
         method: 'POST', // Specify POST method
         headers: {
             'Content-Type': 'application/json', // Set the content type
@@ -70,7 +70,6 @@ const searchNode = async () => {
         body: JSON.stringify({
             "change_type": "ADD_NEW_FIELD",
             "version": "1.0.1",
-            "search_term": searchTerm.value
         })
     })
     const data = await response.json();
